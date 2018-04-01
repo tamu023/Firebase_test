@@ -44,15 +44,15 @@ public class MainActivity extends AppCompatActivity {
         final EditText txt5;
         final EditText txt6;
 
-        txt = (EditText) findViewById(R.id.edittext);
-        txt1 = (EditText) findViewById(R.id.edittext1);
-        txt2 = (EditText) findViewById(R.id.edittext2);
-        txt3 = (EditText) findViewById(R.id.edittext3);
-        txt4 = (EditText) findViewById(R.id.edittext4);
-        txt5 = (EditText) findViewById(R.id.edittext5);
-        txt6 = (EditText) findViewById(R.id.edittext6);
-        btn = (Button) findViewById(R.id.button1);
-        olvasbtn = (Button) findViewById(R.id.button2);
+        txt = findViewById(R.id.edittext);
+        txt1 = findViewById(R.id.edittext1);
+        txt2 = findViewById(R.id.edittext2);
+        txt3 = findViewById(R.id.edittext3);
+        txt4 = findViewById(R.id.edittext4);
+        txt5 = findViewById(R.id.edittext5);
+        txt6 = findViewById(R.id.edittext6);
+        btn = findViewById(R.id.button1);
+        olvasbtn = findViewById(R.id.button2);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
