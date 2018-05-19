@@ -19,10 +19,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -102,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
 
         String email = "tamasboldizsar23@gmail.com";
         String password = "qwedsa";
-        String userID;
         final FirebaseAuth mAuth;
         mAuth = FirebaseAuth.getInstance();
         //Regisztráció
@@ -128,7 +130,11 @@ public class MainActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             txt.setText(user.getUid());
                             //rootref alatt uid val link létrehozása
-                            rootRef.child(user.getUid().toString()).setValue("siker");
+                            rootRef.child(user.getUid()).setValue("siker");
+
+
+                            User teszt = new User("m", "s", false, false, false, 65, 189, false, 58.3, false);
+                            rootRef.child(user.getUid()).setValue(teszt);
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(MainActivity.this, "Authentication failed.",
@@ -136,6 +142,42 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+        //beírja az adott felhasználó alá a raktárába a lekérdezett étel ID ja alá a mennyiséget és lejáraati dátumot
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseUser user = mAuth.getCurrentUser();
+                Firebase storageref = new Firebase(rootRef + "/" + user.getUid() + "/storage");
+                Stock kaja = new Stock(3,"2017.12.4");
+                storageref.child(txt3.getText().toString()).setValue(kaja);
+
+            }
+        });
+
+        //olvasás amilyen mélyen van még a megadott eléréshez képest annyi for ciklus szükséges
+        Firebase prodref = new Firebase("https://fir-test-1d013.firebaseio.com/Products/Finished");
+        prodref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //postsnapshot lényegében az i,j változó is lehetne
+                for (DataSnapshot elsoszint : dataSnapshot.getChildren()) {
+                    txt3.setText(elsoszint.getKey());
+                    for (DataSnapshot masodikszint: elsoszint.getChildren() ){
+                        txt4.setText(masodikszint.getKey());
+                        if (masodikszint.getValue().toString().equals("hus")){
+                            txt2.setText(masodikszint.getValue().toString());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
 
 //Firestore-----------------------------------------------------------------------------
         /*FirebaseFirestore db = FirebaseFirestore.getInstance();
