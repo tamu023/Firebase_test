@@ -12,8 +12,13 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -54,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
         btn = findViewById(R.id.button1);
         olvasbtn = findViewById(R.id.button2);
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        //Beírás a meghatározott útvonalra
+        /* btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Firebase beszur = rootRef.child("proba").child("elsoproba");
@@ -62,17 +68,19 @@ public class MainActivity extends AppCompatActivity {
                 //myRef.child("termekek").child("felkesz").child("tej").setValue("valami");
                 //myRef.setValue(33);
             }
-        });
+        });*/
 
-        olvasbtn.setOnClickListener(new View.OnClickListener() {
+        //felhasználó bevitele a rootRef útvonal alá
+       /* olvasbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Felhasznalok tam = new Felhasznalok("daih saueh", "diausg@asuih.ti", false, true, 63, 72, true);
                 rootRef.push().setValue(tam);
             }
-        });
+        });*/
 
-        olvasref.addValueEventListener(new ValueEventListener() {
+        //olvasRef link alatt lévő Eventeket figyeli
+        /*olvasref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //egy adott linken lévő kulcs vagy érték kiiratása
@@ -89,10 +97,48 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(FirebaseError firebaseError) {
                 System.out.println("Failed");
             }
-        });
+        });*/
+
+
+        String email = "tamasboldizsar23@gmail.com";
+        String password = "qwedsa";
+        String userID;
+        final FirebaseAuth mAuth;
+        mAuth = FirebaseAuth.getInstance();
+        //Regisztráció
+        /*mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });*/
+        //Bejelentkezés
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            txt.setText(user.getUid());
+                            //rootref alatt uid val link létrehozása
+                            rootRef.child(user.getUid().toString()).setValue("siker");
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
 //Firestore-----------------------------------------------------------------------------
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        /*FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Create a new user with a first and last name
         //Felhasznalok felh = new Felhasznalok("nev","mail",false,false,76,187,true);
         Map<String, Object> user = new HashMap<>();
@@ -138,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(MainActivity.this, "Failed", Toast.LENGTH_LONG).show();
                     }
-                });
+                });*/
 
     }
 
