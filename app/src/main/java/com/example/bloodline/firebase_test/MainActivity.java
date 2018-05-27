@@ -1,5 +1,8 @@
 package com.example.bloodline.firebase_test;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -62,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
         btn = findViewById(R.id.button1);
         olvasbtn = findViewById(R.id.button2);
 
+        if (isNetworkAvailable()) {
+            Toast.makeText(MainActivity.this, "Van Internet", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, "Nincs internet", Toast.LENGTH_SHORT).show();
+        }
+
+
         //Beírás a meghatározott útvonalra
         /* btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,8 +125,7 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                         } else {
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });*/
@@ -137,23 +146,21 @@ public class MainActivity extends AppCompatActivity {
                             rootRef.child(user.getUid()).setValue(teszt);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
 
         //beírja az adott felhasználó alá a raktárába a lekérdezett étel ID ja alá a mennyiséget és lejáraati dátumot
-        btn.setOnClickListener(new View.OnClickListener() {
+        /*btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FirebaseUser user = mAuth.getCurrentUser();
                 Firebase storageref = new Firebase(rootRef + "/" + user.getUid() + "/storage");
                 Stock kaja = new Stock(3,"2017.12.4");
                 storageref.child(txt3.getText().toString()).setValue(kaja);
-
             }
-        });
+        });*/
 
         //olvasás amilyen mélyen van még a megadott eléréshez képest annyi for ciklus szükséges
         Firebase prodref = new Firebase("https://fir-test-1d013.firebaseio.com/Products/Finished");
@@ -163,9 +170,9 @@ public class MainActivity extends AppCompatActivity {
                 //postsnapshot lényegében az i,j változó is lehetne
                 for (DataSnapshot elsoszint : dataSnapshot.getChildren()) {
                     txt3.setText(elsoszint.getKey());
-                    for (DataSnapshot masodikszint: elsoszint.getChildren() ){
+                    for (DataSnapshot masodikszint : elsoszint.getChildren()) {
                         txt4.setText(masodikszint.getKey());
-                        if (masodikszint.getValue().toString().equals("hus")){
+                        if (masodikszint.getValue().toString().equals("hus")) {
                             txt2.setText(masodikszint.getValue().toString());
                         }
                     }
@@ -230,6 +237,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
     private class Felhasznalok {
         String name;
